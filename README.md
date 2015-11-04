@@ -1,7 +1,7 @@
 
 C3S seminars platform
 
-## Important
+## If you want to compile project, you'll need:
 
-+ seminars platform built
-
++ Java 1.7
++ Apache Maven 3.1+
