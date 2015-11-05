@@ -43,7 +43,7 @@ public class Record {
     // if you want to use objectify.filter, @index is a must
     @Index public String currentWeek;
     @Index public String category;
-    public String title;
+    @Index public String title;
     public String speaker;
     public String date;
     public String room;

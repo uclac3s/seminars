@@ -10,9 +10,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 
 public class NoteSyncServlet extends HttpServlet {
@@ -23,14 +20,23 @@ public class NoteSyncServlet extends HttpServlet {
      * @param content
      */
     private void doInserts(com.google.appengine.api.users.User appUser, String content) {
-        System.out.println("###" + content);
         Gson gson = new Gson();
         Record r = gson.fromJson(content, Record.class);
 
         System.out.println("Inserted: " + r.toString());
-        ObjectifyService.ofy().save().entities(r).now();
 
-        System.out.println("###" + r);
+        // examine the existed one with the same title and overwrite it
+        List<Record> existed = ObjectifyService.ofy()
+                .load()
+                .type(Record.class) //
+                .filter("title", r.title)
+                .list();
+
+        if (existed.size() > 0) {
+            r.id = existed.get(0).id;
+        }
+
+        ObjectifyService.ofy().save().entities(r).now();
     }
 
     /**
