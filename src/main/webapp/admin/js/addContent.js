@@ -144,7 +144,7 @@ function Submit() {
 
            $.ajax({
                 type: "POST",
-                url: "/notesync",
+                url: "/admin/notesync",
                 data: {"insert": seminar_dat},
                 dataType: "json",
                 success: function (result) {

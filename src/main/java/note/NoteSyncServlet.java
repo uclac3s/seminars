@@ -52,6 +52,8 @@ public class NoteSyncServlet extends HttpServlet {
         System.out.println("#" + r);
 
         // do deletes
+        req.getParameter("seminar_links");
+
         /*
         String deletes = req.getParameter("delete");
         Record[] deletedRecords = new Record[0];
