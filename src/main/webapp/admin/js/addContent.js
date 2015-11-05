@@ -89,6 +89,14 @@ function checkDate(dateStr) {
 	return "";
 }
 
+function Reset() {
+	document.getElementById("title").value = '';
+	document.getElementById("speaker").value = '';
+	document.getElementById("date").value = '';
+	document.getElementById("room").value = '';
+	document.getElementById("remark").value = '';
+}
+
 function Submit() {
 	
 	var title = null;
@@ -166,21 +174,13 @@ function Submit() {
 	var seminar_dat = JSON.stringify(seminar);
 	alert(seminar_dat);
 
-           $.ajax({
-                type: "POST",
-                url: "/admin/notesync",
-                data: {"insert": seminar_dat},
-                dataType: "json",
-                success: function (result) {
-                   alert(result["result"]);
-                }
-            });
-	/*
-	document.getElementById("title").value = '';
-	document.getElementById("speaker").value = '';
-	document.getElementById("date").value = '';
-	document.getElementById("room").value = '';
-	document.getElementById("remark").value = '';
-	*/
-
+  $.ajax({
+		type: "POST",
+		url: "/admin/notesync",
+		data: {"insert": seminar_dat},
+		dataType: "json",
+		success: function (result) {
+			alert(result["result"]);
+		}
+  });
 }
