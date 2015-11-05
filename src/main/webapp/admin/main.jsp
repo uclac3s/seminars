@@ -121,7 +121,9 @@
 					<p>1. 我们使用seminar title作为unique ID, title名相同的seminar会按时间覆盖。</p>
 					<p>2. 除Remark外，其他输入框不能为空。</p>
 					<p>3. 输入的值最大长度为1000字节。</p>
-					<p>4. seminar 时间必按照统一的格式（英文逗号隔开）： DayOfWeek, Month Day, Year, Time。 Example: Monday, November 02, 2015, 4:00PM - 5:30 PM. </p>
+					<p>4. seminar 时间必按照统一的格式（英文逗号隔开）： DayOfWeek, Month Day, Year, Time。<p> 
+					<p>Time Format Example 1: Monday, November 02, 2015, 4:00PM - 5:30 PM. </p>
+					<p>Time Format Example 2 (End time unknown): Tuesday, November 03, 2015, 4:00PM - . </p>
 					<!--p>5. 成功提交后，除category之外的其他部分会自动清空。 </p-->
         </div>
 

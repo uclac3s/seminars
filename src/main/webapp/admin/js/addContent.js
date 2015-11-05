@@ -82,7 +82,7 @@ function checkDate(dateStr) {
 	}
 	var start = timeparts[0].trim();
 	var end = timeparts[0].trim();
-	if((start.indexOf("am") < 0 && start.indexOf("pm") < 0) || (end.indexOf("am") < 0 && end.indexOf("pm") < 0)) {
+	if(start.indexOf("am") < 0 && start.indexOf("pm") < 0) {
 		return "Please check the format of date, especially TIME (specify AM/PM)!";
 	}
 	
