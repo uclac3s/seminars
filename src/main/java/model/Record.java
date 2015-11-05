@@ -48,15 +48,16 @@ public class Record {
     public String date;
     public String room;
     public String remark;
+    public String timestamp;
 
     /**
      * Default constructor is necessary for serialization
      */
     public Record() {
-        this("null", "null", "null", "null", "null", "null");
+        this("null", "null", "null", "null", "null", "null", "null");
     }
 
-    public Record(String category, String title, String date, String speaker, String room, String remark) {
+    public Record(String category, String title, String date, String speaker, String room, String remark, String timestamp) {
         this.id = Service.getAndIncrementNextId();
         this.currentWeek = Service.getCurrentWeekInMillis();
         this.category = category;
@@ -65,6 +66,7 @@ public class Record {
         this.speaker = speaker;
         this.room = room;
         this.remark = remark;
+        this.timestamp = timestamp;
     }
 
     @Override
@@ -78,10 +80,11 @@ public class Record {
                 ", date='" + date + '\'' +
                 ", room='" + room + '\'' +
                 ", remark='" + remark + '\'' +
+                ", timestamp='" + timestamp + '\'' +
                 '}';
     }
 
-        /*
+    /*
       @Override
       public String toString() {
          * we transfer id to the client side as a string since
@@ -92,6 +95,7 @@ public class Record {
       public void escapeQuotes() {
         key = key.replace("\"", "\\\"");
         value = value.replace("\"", "\\\"");
-      }*/
+      }
+    */
 
 }

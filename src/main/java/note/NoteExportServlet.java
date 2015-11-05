@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class NoteExportServlet extends HttpServlet {
@@ -50,6 +52,13 @@ public class NoteExportServlet extends HttpServlet {
                     .filter("currentWeek", Service.getCurrentWeekInMillis())
                     .list();
         }
+
+        // order records
+        Collections.sort(records, new Comparator<Record>() {
+            public int compare(Record o1, Record o2) {
+                return o1.timestamp.compareTo(o2.timestamp);
+            }
+        });
 
         resp.getWriter().println(render(records, category));
     }

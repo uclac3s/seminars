@@ -115,15 +115,15 @@
                 </div>
 
 				<div class="col-md-11 col-sm-11">
-				<div class = "page-header">
-				  <h1><strong>格式要求</strong></h1>
+				  <div class = "page-header">
+				    <h1><strong>格式要求</strong></h1>
 				  </div>
 					<p>1. 我们使用seminar title作为unique ID, title名相同的seminar会按时间覆盖。</p>
 					<p>2. 除Remark外，其他输入框不能为空。</p>
 					<p>3. 输入的值最大长度为1000字节。</p>
 					<p>4. seminar 时间必按照统一的格式（英文逗号隔开）： DayOfWeek, Month Day, Year, Time。 Example: Monday, November 02, 2015, 4:00PM - 5:30 PM. </p>
-					<p>5. 成功提交后，除category之外的其他部分会自动清空。 </p>
-        		</div>
+					<!--p>5. 成功提交后，除category之外的其他部分会自动清空。 </p-->
+        </div>
 
 				<div class="col-md-11 col-sm-11">
 				<div class = "page-header">

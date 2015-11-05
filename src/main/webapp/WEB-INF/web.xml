@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
+    <!-- admin servlet -->
     <servlet>
         <servlet-name>notesync</servlet-name>
         <servlet-class>note.NoteSyncServlet</servlet-class>
@@ -13,21 +14,22 @@
     </servlet-mapping>
 
     <servlet>
+        <servlet-name>noteexport</servlet-name>
+        <servlet-class>note.NoteExportServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>noteexport</servlet-name>
+        <url-pattern>/admin/export</url-pattern>
+    </servlet-mapping>
+
+    <!-- public servlet -->
+    <servlet>
         <servlet-name>getseminarlinks</servlet-name>
         <servlet-class>note.SeminarLinksServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>getseminarlinks</servlet-name>
         <url-pattern>/getseminarlinks</url-pattern>
-    </servlet-mapping>
-
-    <servlet>
-        <servlet-name>noteexport</servlet-name>
-        <servlet-class>note.NoteExportServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>noteexport</servlet-name>
-        <url-pattern>/export</url-pattern>
     </servlet-mapping>
 
     <welcome-file-list>

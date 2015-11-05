@@ -172,7 +172,7 @@ function Submit() {
                 data: {"insert": seminar_dat},
                 dataType: "json",
                 success: function (result) {
-                   alert(result);
+                   alert(result["result"]);
                 }
             });
 	/*
