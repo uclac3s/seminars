@@ -1,8 +1,10 @@
 package note;
 
+import com.google.appengine.api.users.User;
 import com.google.gson.Gson;
 import com.googlecode.objectify.ObjectifyService;
 import model.Record;
+import model.SeminarLink;
 import util.Service;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -10,16 +12,72 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class NoteSyncServlet extends HttpServlet {
-    private Record doInserts(com.google.appengine.api.users.User appUser, String content) {
+
+    /**
+     * insert new seminars to db
+     * @param appUser
+     * @param content
+     */
+    private void doInserts(com.google.appengine.api.users.User appUser, String content) {
+        System.out.println("###" + content);
         Gson gson = new Gson();
         Record r = gson.fromJson(content, Record.class);
 
         System.out.println("Inserted: " + r.toString());
         ObjectifyService.ofy().save().entities(r).now();
-        return r;
+
+        System.out.println("###" + r);
+    }
+
+    /**
+     * update seminar links in db
+     * @param appUser
+     * @param linkContent
+     */
+    private void doSeminarLinks(User appUser, String linkContent) {
+        System.out.println("***" + linkContent);
+        Gson gson = new Gson();
+        SeminarLink[] links = gson.fromJson(linkContent, SeminarLink[].class);
+
+        for (SeminarLink link : links) {
+            ObjectifyService.ofy().save().entities(link).now();
+        }
+    }
+
+    @Override
+    public void doPost(HttpServletRequest req, HttpServletResponse resp)
+            throws IOException {
+
+        req.setCharacterEncoding("utf-8");
+        com.google.appengine.api.users.User appUser = Service.getCurrentUser();
+
+
+        // Action 1: add weekly seminars
+        String insertContent = req.getParameter("insert");
+        if (insertContent != null) {
+            doInserts(appUser, insertContent);
+        }
+
+        // Action 2: update weekly seminar links
+        String linkContent = req.getParameter("seminar_links");
+        if (linkContent != null) {
+            doSeminarLinks(appUser, linkContent);
+        }
+
+        /*String deletes = req.getParameter("delete");
+        Record[] deletedRecords = new Record[0];
+        if (deletes != null) {
+            deletedRecords = doDeletes(appUser, deletes);
+        }*/
+
+        //String updates = req.getParameter("update");
+
+        resp.setContentType("application/json");
+        resp.getWriter().printf("{\"result\": \"success\"}");
     }
 
     /**
@@ -37,34 +95,4 @@ public class NoteSyncServlet extends HttpServlet {
                 .parent(new User(appUser.getEmail())).ids(ids).now();
         return deletedRecords;
     }*/
-
-    @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse resp)
-            throws IOException {
-
-        req.setCharacterEncoding("utf-8");
-        com.google.appengine.api.users.User appUser = Service.getCurrentUser();
-
-        // do inserts
-        String insertContent = req.getParameter("insert");
-        System.out.println("#" + insertContent);
-        Record r = doInserts(appUser, insertContent);
-        System.out.println("#" + r);
-
-        // do deletes
-        req.getParameter("seminar_links");
-
-        /*
-        String deletes = req.getParameter("delete");
-        Record[] deletedRecords = new Record[0];
-        if (deletes != null) {
-            deletedRecords = doDeletes(appUser, deletes);
-        }*/
-
-        // TODO: implement do updates
-        //String updates = req.getParameter("update");
-
-        resp.setContentType("application/json");
-        resp.getWriter().printf("inserted");
-    }
 }

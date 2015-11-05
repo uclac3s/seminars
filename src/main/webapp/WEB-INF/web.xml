@@ -13,12 +13,12 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>noteget</servlet-name>
-        <servlet-class>note.NoteGetServlet</servlet-class>
+        <servlet-name>getseminarlinks</servlet-name>
+        <servlet-class>note.SeminarLinksServlet</servlet-class>
     </servlet>
     <servlet-mapping>
-        <servlet-name>noteget</servlet-name>
-        <url-pattern>/noteget</url-pattern>
+        <servlet-name>getseminarlinks</servlet-name>
+        <url-pattern>/getseminarlinks</url-pattern>
     </servlet-mapping>
 
     <servlet>

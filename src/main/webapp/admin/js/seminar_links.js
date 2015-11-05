@@ -32,29 +32,28 @@ function add_header() {
 
 function Submit() {
 
-	var link_map = {
-		'career_dev': '',
-		'bio': '',
-		'eng': '',
-		'eco': '',
-		'chem_phys_earth': '',
-		'math_cs': '',
-		'social': ''
-	};
+	var link_arr = [
+		{'category': 'career_dev', 'url': ''},
+		{'category': 'bio', 'url': ''},
+		{'category': 'eng', 'url': ''},
+		{'category': 'eco', 'url': ''},
+		{'category': 'chem_phys_earth', 'url': ''},
+		{'category': 'math_cs', 'url': ''},
+		{'category': 'social', 'url': ''}
+	];
 
-	for (var key in link_map) {
-     if (link_map.hasOwnProperty(key)) {
-			 if (document.getElementById(key) != null) {
-					link_map[key] = document.getElementById(key).value;
-					if(link_map[key].length == 0) {
-						alert(key + " is EMPTY !!");
-						return;
-					}
-			 }
-     }
+	for (var i=0; i<link_arr.length; i++) {
+					 var key = link_arr[i]['category'];
+					 if (document.getElementById(key) != null) {
+							link_arr[i]['url'] = document.getElementById(key).value;
+							if(link_arr[i]['url'].length == 0) {
+								alert(key + " is EMPTY !!");
+								return;
+							}
+					 }
   }
 
-	var dat = JSON.stringify(link_map);
+	var dat = JSON.stringify(link_arr);
 	alert(dat);
 
            $.ajax({
@@ -63,14 +62,8 @@ function Submit() {
                 data: {"seminar_links": dat},
                 dataType: "json",
                 success: function (result) {
-                   alert(result);
+                   alert(result["result"]);
                 }
             });
-	/*
-	document.getElementById("title").value = '';
-	document.getElementById("speaker").value = '';
-	document.getElementById("date").value = '';
-	document.getElementById("room").value = '';
-	document.getElementById("remark").value = '';
-	*/
+
 }
