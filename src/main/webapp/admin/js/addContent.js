@@ -97,87 +97,92 @@ function Reset() {
 	document.getElementById("remark").value = '';
 }
 
-function Submit() {
-	
+function checkFields() {
 	var title = null;
 	if (document.getElementById("title") != null) {
 		title = document.getElementById("title").value;
 		if(title.length == 0) {
 			alert("Title is EMPTY !!");
-			return;
+			return null;
 		}
-	} 
-	
+	}
+
 	var category = null;
 	if (document.getElementById("category") != null) {
 		category = document.getElementById("category").value;
 		if(category.length == 0) {
 			alert("Category is EMPTY !!");
-			return;
-			// window.alert("Category is EMPTY !!");
+			return null;
 		}
-	} 
-	
+	}
+
 	var speaker = null;
 	if (document.getElementById("speaker") != null) {
 		speaker = document.getElementById("speaker").value;
 		if(speaker.length == 0) {
 			alert("Speaker is EMPTY !!");
-			return;
+			return null;
 		}
-	} 
-	
+	}
+
 	var date = null;
 	if (document.getElementById("date") != null) {
 		date = document.getElementById("date").value;
 		if(date.length == 0) {
 			alert("Date is EMPTY !!");
-			return;
+			return null;
 		}
 		var message = checkDate(date);
 		if(message.length > 0) {
 			alert(message);
-			return;
+			return null;
 		}
-	} 
-	
+	}
+
 	var room = null;
 	if (document.getElementById("room") != null) {
 		room = document.getElementById("room").value;
 		if(room.length == 0) {
 			alert("Room is EMPTY !!");
-			return;
+			return null;
 		}
-	} 
-	
+	}
+
 	var remark = null;
 	if (document.getElementById("remark") != null) {
 		remark = document.getElementById("remark").value;
 		if(remark.length > 1000) {
 			alert("Remark is Too Long !!");
-			return;
+			return null;
 		}
-	} 
-	
+	}
+
 	var timestamp = numDate(date);
-	
-	var seminar = {
+
+	return {
 		"category": category,
-		"title": title, 
+		"title": title,
 		"speaker": speaker,
 		"date": date,
-		"room": room, 
+		"room": room,
 		"remark": remark,
 		"timestamp":timestamp
+	};
+}
+
+function Submit(isDelete) {
+	var seminar = checkFields();
+	if ((seminar == undefined) || (seminar == null)) {
+		return;
 	}
 
 	var seminar_dat = JSON.stringify(seminar);
-	alert(seminar_dat);
+	// alert(seminar_dat);
 
   $.ajax({
 		type: "POST",
 		url: "/admin/notesync",
-		data: {"insert": seminar_dat},
+		data: {"insert": seminar_dat, "delete": isDelete},
 		dataType: "json",
 		success: function (result) {
 			alert(result["result"]);

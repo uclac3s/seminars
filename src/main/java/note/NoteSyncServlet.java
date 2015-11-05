@@ -19,13 +19,12 @@ public class NoteSyncServlet extends HttpServlet {
      * @param appUser
      * @param content
      */
-    private void doInserts(com.google.appengine.api.users.User appUser, String content) {
+    private boolean doInserts(com.google.appengine.api.users.User appUser, String content, String isDelete) {
         Gson gson = new Gson();
         Record r = gson.fromJson(content, Record.class);
 
-        System.out.println("Inserted: " + r.toString());
-
         // examine the existed one with the same title and overwrite it
+        // TODO: not distinguish cases
         List<Record> existed = ObjectifyService.ofy()
                 .load()
                 .type(Record.class) //
@@ -33,10 +32,24 @@ public class NoteSyncServlet extends HttpServlet {
                 .list();
 
         if (existed.size() > 0) {
-            r.id = existed.get(0).id;
+            if (isDelete.equals("true")) {
+                // set r to the existed record
+                r = existed.get(0);
+                System.out.println("Delete: " + r.toString());
+                ObjectifyService.ofy().delete().type(Record.class).id(r.id).now();
+            } else {
+                return false;
+            }
+        } else {
+            if (isDelete.equals("true")) {
+                return true;
+            } else {
+                System.out.println("Insert: " + r.toString());
+                ObjectifyService.ofy().save().entities(r).now();
+            }
         }
 
-        ObjectifyService.ofy().save().entities(r).now();
+        return true;
     }
 
     /**
@@ -44,7 +57,7 @@ public class NoteSyncServlet extends HttpServlet {
      * @param appUser
      * @param linkContent
      */
-    private void doSeminarLinks(User appUser, String linkContent) {
+    private boolean doSeminarLinks(User appUser, String linkContent) {
         System.out.println("***" + linkContent);
         Gson gson = new Gson();
         SeminarLink[] links = gson.fromJson(linkContent, SeminarLink[].class);
@@ -52,6 +65,8 @@ public class NoteSyncServlet extends HttpServlet {
         for (SeminarLink link : links) {
             ObjectifyService.ofy().save().entities(link).now();
         }
+
+        return true;
     }
 
     @Override
@@ -61,44 +76,25 @@ public class NoteSyncServlet extends HttpServlet {
         req.setCharacterEncoding("utf-8");
         com.google.appengine.api.users.User appUser = Service.getCurrentUser();
 
+        boolean result = true;
 
-        // Action 1: add weekly seminars
+        // Action 1 & 2: add/delete weekly seminars
         String insertContent = req.getParameter("insert");
         if (insertContent != null) {
-            doInserts(appUser, insertContent);
+            result = doInserts(appUser, insertContent, req.getParameter("delete"));
         }
 
-        // Action 2: update weekly seminar links
+        // Action 3: update weekly seminar links
         String linkContent = req.getParameter("seminar_links");
         if (linkContent != null) {
-            doSeminarLinks(appUser, linkContent);
+            result = doSeminarLinks(appUser, linkContent);
         }
-
-        /*String deletes = req.getParameter("delete");
-        Record[] deletedRecords = new Record[0];
-        if (deletes != null) {
-            deletedRecords = doDeletes(appUser, deletes);
-        }*/
-
-        //String updates = req.getParameter("update");
 
         resp.setContentType("application/json");
-        resp.getWriter().printf("{\"result\": \"success\"}");
-    }
-
-    /**
-     * deletes only consider id, so content will has no affects
-     */
-    /*   private Record[] doDeletes(com.google.appengine.api.users.User appUser, String deletes) {
-        Gson gson = new Gson();
-        Record[] deletedRecords = gson.fromJson(deletes, Record[].class);
-        List<String> ids = new ArrayList<String>();
-        for (Record r: deletedRecords) {
-            ids.add(r.id);
+        if (result) {
+            resp.getWriter().printf("{\"result\": \"Success!\"}");
+        } else {
+            resp.getWriter().printf("{\"result\": \"Failed: same title exists, please delete if you want to overwrite!\"}");
         }
-        System.out.println("Deleted: " + Arrays.asList(deletedRecords));
-        ObjectifyService.ofy().delete().type(Record.class)
-                .parent(new User(appUser.getEmail())).ids(ids).now();
-        return deletedRecords;
-    }*/
+    }
 }
