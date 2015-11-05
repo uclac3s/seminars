@@ -1,7 +1,7 @@
 // JavaScript Document
 
-var days = "monday tuesday wednesday thursday friday saturday sunday";
-var months = "january february march april may june july august september october november december";
+var days = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+var months = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
 
 function add_footer() {
 	document.getElementById("FOOTER").innerHTML = " <div class='footer-container'>            <footer class='wrapper'> \
@@ -28,6 +28,27 @@ function add_header() {
         </div>\
     </header>\
 	</div>";
+}
+
+function numDate(dateStr) {
+
+	var parts = dateStr.split(",");
+	var date = parts[1].trim().toLowerCase();
+	var time = parts[3].trim().toLowerCase();
+
+	var num = 0;
+	var dateparts = date.split(" ");
+	var month = months.indexOf(dateparts[0].trim()) + 1;
+	var day = Number(dateparts[1].trim());
+	var year = Number(parts[2].trim());
+	var timeparts = time.split("-");
+	var start = timeparts[0].split(":");
+	var hour = Number(start[0]);
+	if(timeparts[0].indexOf("pm") >= 0) {
+		hour += 12;	
+	}
+	num = year * 1000000 + month * 10000 + day * 100 + hour;
+	return num;
 }
 
 function checkDate(dateStr) {
@@ -130,13 +151,16 @@ function Submit() {
 		}
 	} 
 	
+	var timestamp = numDate(date);
+	
 	var seminar = {
 		"category": category,
 		"title": title, 
 		"speaker": speaker,
 		"date": date,
 		"room": room, 
-		"remark": remark
+		"remark": remark,
+		"timestamp":timestamp
 	}
 
 	var seminar_dat = JSON.stringify(seminar);
