@@ -22,6 +22,7 @@ public class BackDoorServlet extends HttpServlet {
      */
     private boolean doInserts(User appUser, String content, String isDelete) {
         Gson gson = new Gson();
+        System.out.println("###\n" + content);
         Record r = gson.fromJson(content, Record.class);
 
         // examine the existed one with the same title and overwrite it
@@ -39,10 +40,12 @@ public class BackDoorServlet extends HttpServlet {
                 System.out.println("Delete: " + r.toString());
                 ObjectifyService.ofy().delete().type(Record.class).id(r.id).now();
             } else {
+                System.out.println("Find an existed record.");
                 return false;
             }
         } else {
             if (isDelete.equals("true")) {
+                System.out.println("Delete a non-exist record : " + r.toString());
                 return true;
             } else {
                 System.out.println("Insert: " + r.toString());
