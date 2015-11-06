@@ -40,6 +40,8 @@ public class SeminarLinksServlet extends HttpServlet {
         resp.setHeader("Access-Control-Allow-Origin", "*");
         resp.setContentType("application/json");
         resp.setCharacterEncoding("utf-8");
+        // resp.setHeader("Cache-Control", "max-age=3600");
+
         resp.getWriter().println(out);
     }
 

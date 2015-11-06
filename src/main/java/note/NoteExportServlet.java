@@ -20,7 +20,6 @@ public class NoteExportServlet extends HttpServlet {
 
         resp.setContentType("text/html");
         resp.setCharacterEncoding("utf-8");
-        resp.setHeader("Cache-Control", "max-age=3600");
 
         String category = req.getParameter("category");
         System.out.println("Category: " + category);
