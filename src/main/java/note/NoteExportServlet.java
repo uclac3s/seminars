@@ -8,9 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 public class NoteExportServlet extends HttpServlet {
     @Override
@@ -23,12 +21,13 @@ public class NoteExportServlet extends HttpServlet {
 
         String category = req.getParameter("category");
         System.out.println("Category: " + category);
+        String day = req.getParameter("day");
+        System.out.println("Day: " + day);
 
         List<Record> records;
 
         /* Category: Biomedicine, Engineering, CS, Chemistry, Business, Career, Social */
 
-        // TODO: support retrieve arbitrary week's records
         // Get current week's records
         if (category != null) {
             records = ObjectifyService.ofy()
@@ -45,7 +44,7 @@ public class NoteExportServlet extends HttpServlet {
                     .list();
         }
 
-        // order records
+        // sort records by date
         try {
             Collections.sort(records, new Comparator<Record>() {
                 public int compare(Record o1, Record o2) {
@@ -57,43 +56,90 @@ public class NoteExportServlet extends HttpServlet {
             e.printStackTrace();
         }
 
-        resp.getWriter().println(render(records, category));
+        // extra sort by categories
+        if (day != null) {
+            day = day.toLowerCase();
+            Map<String, List<Record>> categoryToRecords = new HashMap<String, List<Record>>();
+            for (Record record: records) {
+                if (record.date.toLowerCase().startsWith(day)) {
+                    if (categoryToRecords.get(record.category) == null) {
+                        categoryToRecords.put(record.category, new ArrayList<Record>());
+                    }
+                    categoryToRecords.get(record.category).add(record);
+                }
+            }
+            resp.getWriter().println(render(categoryToRecords));
+        } else {
+            resp.getWriter().println(render(records, category));
+        }
     }
 
     private String render(List<Record> records, String category) {
-        StringBuilder htmlBuilder = new StringBuilder();
+        StringBuilder builder = new StringBuilder();
         if (category == null) {
             category = "All";
         }
 
-        htmlBuilder.append("<html>");
+        builder.append("<html>");
 
-        htmlBuilder.append("<head>");
-        htmlBuilder.append("<title>");
-        htmlBuilder.append("Week " + Service.getCurrentWeekInMillis() + " Category: " + category);
-        htmlBuilder.append("</title>");
-        htmlBuilder.append("</head>");
+        builder.append("<head>");
+        builder.append("<title>");
+        builder.append("Week " + Service.getCurrentWeekInMillis() + " Category: " + category);
+        builder.append("</title>");
+        builder.append("</head>");
 
 
-        htmlBuilder.append("<body>");
-        htmlBuilder.append("<h2>" + category + "</h2>");
+        builder.append("<body>");
+
+        renderRecords(builder, category, records);
+
+        builder.append("</body>");
+        builder.append("</html>");
+
+        return builder.toString();
+    }
+
+    private String render(Map<String, List<Record>> categoryToRecords) {
+        StringBuilder builder = new StringBuilder();
+
+        builder.append("<html>");
+
+        builder.append("<head>");
+        builder.append("<title>");
+        builder.append("Week " + Service.getCurrentWeekInMillis());
+        builder.append("</title>");
+        builder.append("</head>");
+
+
+        builder.append("<body>");
+
+        // sort map by keys
+        SortedSet<String> categories = new TreeSet<String>(categoryToRecords.keySet());
+        for (String category : categories) {
+            List<Record> records = categoryToRecords.get(category);
+            renderRecords(builder, category, records);
+        }
+
+        builder.append("</body>");
+        builder.append("</html>");
+
+        return builder.toString();
+    }
+
+    private void renderRecords(StringBuilder builder, String category, List<Record> records) {
+        builder.append("<h2>" + category + "</h2>");
 
         int index = 1;
         for (Record r: records) {
-            renderTitle(htmlBuilder, index);
-            renderP(htmlBuilder, "讲座题目", r.title, true);
-            renderP(htmlBuilder, "主讲人", r.speaker, false);
-            renderP(htmlBuilder, "时间", r.date, false);
-            renderP(htmlBuilder, "地点", r.room, false);
-            renderP(htmlBuilder, "备注", r.remark, false);
-            renderEmptyLine(htmlBuilder);
+            renderTitle(builder, index);
+            renderP(builder, "讲座题目", r.title, true);
+            renderP(builder, "主讲人", r.speaker, false);
+            renderP(builder, "时间", r.date, false);
+            renderP(builder, "地点", r.room, false);
+            renderP(builder, "备注", r.remark, false);
+            renderEmptyLine(builder);
             index += 1;
         }
-
-        htmlBuilder.append("</body>");
-        htmlBuilder.append("</html>");
-
-        return htmlBuilder.toString();
     }
 
     private void renderTitle(StringBuilder builder, int index) {
