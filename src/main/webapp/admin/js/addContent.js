@@ -81,9 +81,9 @@ function checkDate(dateStr) {
 		return "Please check the format of date, especially TIME (only one dash allowed)!";
 	}
 	var start = timeparts[0].trim();
-	var end = timeparts[0].trim();
-	if(start.indexOf("am") < 0 && start.indexOf("pm") < 0) {
-		return "Please check the format of date, especially TIME (specify AM/PM)!";
+	var timeFormat = /^(0?[0-9]|1[012])(:[0-5]\d)[APap][mM]$/;
+	if(timeFormat.test(start) == false) {
+		return "Please check the format of date, especially START TIME (hh:mmAM or hh:mmPM)!";
 	}
 	
 	return "";
@@ -157,7 +157,12 @@ function checkFields() {
 		}
 	}
 
-	var timestamp = numDate(date);
+	var timestamp = 0;
+	try {
+		timestamp = numDate(date);
+	} catch(err) {
+		alert(err.message);	
+	}
 
 	return {
 		"category": category,
