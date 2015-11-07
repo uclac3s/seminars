@@ -26,15 +26,7 @@ public class NoteExportServlet extends HttpServlet {
 
         List<Record> records;
 
-        /*
-        <option value="Biomedicine">Biomedicine</option>
-        <option value="Engineering">Engineering/Materials Science</option>
-        <option value="CS">CS/Math</option>
-        <option value="Chemistry">Chemistry/Physics/Earth Science</option>
-        <option value="Business">Business/Economics/Law</option>
-        <option value="Career">Career Development</option>
-        <option value="Social">Social Science/Humanities</option>
-        */
+        /* Category: Biomedicine, Engineering, CS, Chemistry, Business, Career, Social */
 
         // TODO: support retrieve arbitrary week's records
         // Get current week's records
@@ -54,11 +46,16 @@ public class NoteExportServlet extends HttpServlet {
         }
 
         // order records
-        Collections.sort(records, new Comparator<Record>() {
-            public int compare(Record o1, Record o2) {
-                return o1.timestamp.compareTo(o2.timestamp);
-            }
-        });
+        try {
+            Collections.sort(records, new Comparator<Record>() {
+                public int compare(Record o1, Record o2) {
+                    return o1.timestamp.compareTo(o2.timestamp);
+                }
+            });
+        } catch (Exception e) {
+            System.err.println("Sort failed due to Exceptions.");
+            e.printStackTrace();
+        }
 
         resp.getWriter().println(render(records, category));
     }
@@ -80,6 +77,7 @@ public class NoteExportServlet extends HttpServlet {
 
         htmlBuilder.append("<body>");
         htmlBuilder.append("<h2>" + category + "</h2>");
+
         int index = 1;
         for (Record r: records) {
             renderTitle(htmlBuilder, index);
@@ -91,8 +89,8 @@ public class NoteExportServlet extends HttpServlet {
             renderEmptyLine(htmlBuilder);
             index += 1;
         }
-        htmlBuilder.append("</body>");
 
+        htmlBuilder.append("</body>");
         htmlBuilder.append("</html>");
 
         return htmlBuilder.toString();

@@ -5,7 +5,6 @@ import com.google.gson.Gson;
 import com.googlecode.objectify.ObjectifyService;
 import model.Record;
 import model.SeminarLink;
-import util.Service;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
