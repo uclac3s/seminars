@@ -44,7 +44,7 @@ function numDate(dateStr) {
 	var timeparts = time.split("-");
 	var start = timeparts[0].split(":");
 	var hour = Number(start[0]);
-	if(timeparts[0].indexOf("pm") >= 0) {
+	if(timeparts[0].indexOf("pm") >= 0 && hour < 12) {
 		hour += 12;	
 	}
 	num = year * 1000000 + month * 10000 + day * 100 + hour;
