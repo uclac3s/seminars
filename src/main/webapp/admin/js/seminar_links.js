@@ -31,39 +31,40 @@ function add_header() {
 }
 
 function Submit() {
+	// update link_arr if category is changed
 
 	var link_arr = [
 		{'category': 'career_dev', 'url': ''},
 		{'category': 'bio', 'url': ''},
 		{'category': 'eng', 'url': ''},
 		{'category': 'eco', 'url': ''},
-		{'category': 'chem_phys_earth', 'url': ''},
+		{'category': 'chem_phys', 'url': ''},
+		{'category': 'earth', 'url': ''},
 		{'category': 'math_cs', 'url': ''},
 		{'category': 'social', 'url': ''}
 	];
 
 	for (var i=0; i<link_arr.length; i++) {
-					 var key = link_arr[i]['category'];
-					 if (document.getElementById(key) != null) {
-							link_arr[i]['url'] = document.getElementById(key).value;
-							if(link_arr[i]['url'].length == 0) {
-								alert(key + " is EMPTY !!");
-								return;
-							}
-					 }
-  }
+		var key = link_arr[i]['category'];
+		if (document.getElementById(key) != null) {
+			link_arr[i]['url'] = document.getElementById(key).value;
+			/*if(link_arr[i]['url'].length == 0) {
+				alert(key + " is EMPTY !!");
+				return;
+			}*/
+		}
+	}
 
 	var dat = JSON.stringify(link_arr);
-	alert(dat);
+	alert('Only non-empty url will be updated. Data: \n' + dat);
 
-           $.ajax({
-                type: "POST",
-                url: "/admin/notesync",
-                data: {"seminar_links": dat},
-                dataType: "json",
-                success: function (result) {
-                   alert(result["result"]);
-                }
-            });
-
+    $.ajax({
+        type: "POST",
+        url: "/admin/notesync",
+        data: {"seminar_links": dat},
+        dataType: "json",
+        success: function (result) {
+            alert(result["result"]);
+        }
+    });
 }

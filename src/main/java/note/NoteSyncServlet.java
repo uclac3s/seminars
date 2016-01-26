@@ -63,7 +63,9 @@ public class NoteSyncServlet extends HttpServlet {
         SeminarLink[] links = gson.fromJson(linkContent, SeminarLink[].class);
 
         for (SeminarLink link : links) {
-            ObjectifyService.ofy().save().entities(link).now();
+            if (link.url.length() > 0) {
+                ObjectifyService.ofy().save().entities(link).now();
+            }
         }
 
         return true;
