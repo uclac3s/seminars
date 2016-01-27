@@ -139,18 +139,18 @@ public class NoteExportServlet extends HttpServlet {
         int index = 1;
         for (Record r: records) {
             renderTitle(builder, index);
-            renderP(builder, "讲座题目", r.title, true);
-            renderP(builder, "主讲人", r.speaker, false);
-            renderP(builder, "时间", r.date, false);
-            renderP(builder, "地点", r.room, false);
-            renderP(builder, "备注", r.remark, false);
+            renderSpan(builder, "讲座题目", r.title, true);
+            renderSpan(builder, "主讲人", r.speaker, false);
+            renderSpan(builder, "时间", r.date, false);
+            renderSpan(builder, "地点", r.room, false);
+            renderSpan(builder, "备注", r.remark, false);
             renderEmptyLine(builder);
             index += 1;
         }
     }
 
     private void renderTitle(StringBuilder builder, int index) {
-        renderP(builder, null, "讲座 [" + index + "]", true);
+        renderSpan(builder, null, "讲座 [" + index + "]", true);
     }
 
     private void renderEmptyLine(StringBuilder builder) {
@@ -158,7 +158,13 @@ public class NoteExportServlet extends HttpServlet {
     }
 
     private void renderP(StringBuilder builder, String prompt, String content, boolean isStrong) {
-        builder.append("<p><span style=\"font-size: 16px;\">");
+        builder.append("<p>");
+        renderSpan(builder, prompt, content, isStrong);
+        builder.append("</p>");
+    }
+
+    private void renderSpan(StringBuilder builder, String prompt, String content, boolean isStrong) {
+        builder.append("<span style=\"font-size: 16px;\">");
         if (prompt != null) {
             builder.append(prompt + ": ");
         }
@@ -167,6 +173,6 @@ public class NoteExportServlet extends HttpServlet {
         } else {
             builder.append(content);
         }
-        builder.append("<br></span></p>");
+        builder.append("<br></span>");
     }
 }

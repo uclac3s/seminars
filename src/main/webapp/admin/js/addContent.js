@@ -75,6 +75,10 @@ function checkDate(dateStr) {
 	if(months.indexOf(month) == -1) {
 		return "Please check the format of date, especially MONTH!";
 	}
+	var day = dateparts[1].trim();
+	if(isNaN(day)) {
+		return "Please check the format of date, especially DAY! (no 'th' allowed)"
+	}
 	
 	var timeparts = time.split("-");
 	if(timeparts.length != 2) {
