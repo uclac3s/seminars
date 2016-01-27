@@ -19,28 +19,35 @@ public class NoteExportServlet extends HttpServlet {
         resp.setContentType("text/html");
         resp.setCharacterEncoding("utf-8");
 
-        String category = req.getParameter("category");
+        final String category = req.getParameter("category");
         System.out.println("Category: " + category);
-        String day = req.getParameter("day");
+
+        final String day = req.getParameter("day");
         System.out.println("Day: " + day);
+
+        final String date = req.getParameter("date");
+        System.out.println("Date: " + date);
 
         List<Record> records;
 
-        /* Category: Biomedicine, Engineering, CS, Chemistry, Business, Career, Social */
+        /* Category: Biomedicine, Engineering, CS, Chemistry, Earth, Business, Career, Social */
 
-        // Get current week's records
+        // Specify a week
+        final String weekInMillis = (date == null) ? Service.getCurrentWeekInMillis() : Service.getWeekInMillisOfDate(date);
+
+        // Get that week's records
         if (category != null) {
             records = ObjectifyService.ofy()
                     .load()
                     .type(Record.class) //
-                    .filter("currentWeek", Service.getCurrentWeekInMillis())
+                    .filter("currentWeek", weekInMillis)
                     .filter("category", category)
                     .list();
         } else {
             records = ObjectifyService.ofy()
                     .load()
                     .type(Record.class) //
-                    .filter("currentWeek", Service.getCurrentWeekInMillis())
+                    .filter("currentWeek", weekInMillis)
                     .list();
         }
 
@@ -58,23 +65,23 @@ public class NoteExportServlet extends HttpServlet {
 
         // extra sort by categories
         if (day != null) {
-            day = day.toLowerCase();
+            String dayLower = day.toLowerCase();
             Map<String, List<Record>> categoryToRecords = new HashMap<String, List<Record>>();
             for (Record record: records) {
-                if (record.date.toLowerCase().startsWith(day)) {
+                if (record.date.toLowerCase().startsWith(dayLower)) {
                     if (categoryToRecords.get(record.category) == null) {
                         categoryToRecords.put(record.category, new ArrayList<Record>());
                     }
                     categoryToRecords.get(record.category).add(record);
                 }
             }
-            resp.getWriter().println(render(categoryToRecords));
+            resp.getWriter().println(render(categoryToRecords, weekInMillis));
         } else {
-            resp.getWriter().println(render(records, category));
+            resp.getWriter().println(render(records, category, weekInMillis));
         }
     }
 
-    private String render(List<Record> records, String category) {
+    private String render(List<Record> records, String category, String weekInMillis) {
         StringBuilder builder = new StringBuilder();
         if (category == null) {
             category = "All";
@@ -84,7 +91,7 @@ public class NoteExportServlet extends HttpServlet {
 
         builder.append("<head>");
         builder.append("<title>");
-        builder.append("Week " + Service.getCurrentWeekInMillis() + " Category: " + category);
+        builder.append("Week " + weekInMillis + " Category: " + category);
         builder.append("</title>");
         builder.append("</head>");
 
@@ -99,14 +106,14 @@ public class NoteExportServlet extends HttpServlet {
         return builder.toString();
     }
 
-    private String render(Map<String, List<Record>> categoryToRecords) {
+    private String render(Map<String, List<Record>> categoryToRecords, String weekInMillis) {
         StringBuilder builder = new StringBuilder();
 
         builder.append("<html>");
 
         builder.append("<head>");
         builder.append("<title>");
-        builder.append("Week " + Service.getCurrentWeekInMillis());
+        builder.append("Week " + weekInMillis);
         builder.append("</title>");
         builder.append("</head>");
 
