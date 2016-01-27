@@ -8,9 +8,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.*;
+import java.util.logging.Logger;
 
 public class NoteExportServlet extends HttpServlet {
+    private static final Logger log = Logger.getLogger(NoteExportServlet.class.getName());
+
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws IOException {
@@ -20,13 +25,13 @@ public class NoteExportServlet extends HttpServlet {
         resp.setCharacterEncoding("utf-8");
 
         final String category = req.getParameter("category");
-        System.out.println("Category: " + category);
+        log.info("Category: " + category);
 
         final String day = req.getParameter("day");
-        System.out.println("Day: " + day);
+        log.info("Day: " + day);
 
         final String date = req.getParameter("date");
-        System.out.println("Date: " + date);
+        log.info("Date: " + date);
 
         List<Record> records;
 
@@ -55,26 +60,40 @@ public class NoteExportServlet extends HttpServlet {
         try {
             Collections.sort(records, new Comparator<Record>() {
                 public int compare(Record o1, Record o2) {
+                    if (o1.timestamp == null ^ o2.timestamp == null) {
+                        return (o1.timestamp == null) ? -1 : 1;
+                    }
+
+                    if (o1.timestamp == null && o2.timestamp == null) {
+                        return 0;
+                    }
+
                     return o1.timestamp.compareTo(o2.timestamp);
                 }
             });
         } catch (Exception e) {
-            System.err.println("Sort failed due to Exceptions.");
-            e.printStackTrace();
+            log.warning("Sort failed due to Exceptions.");
+            StringWriter sw = new StringWriter();
+            PrintWriter pw = new PrintWriter(sw);
+            e.printStackTrace(pw);
+            log.warning(sw.toString());
+            //e.printStackTrace();
         }
 
-        // extra sort by categories
+        // log.info(records.toString());
+        // put record in its own category
         if (day != null) {
             String dayLower = day.toLowerCase();
             Map<String, List<Record>> categoryToRecords = new HashMap<String, List<Record>>();
             for (Record record: records) {
-                if (record.date.toLowerCase().startsWith(dayLower)) {
+                if (record.date.toLowerCase().contains(dayLower)) {
                     if (categoryToRecords.get(record.category) == null) {
                         categoryToRecords.put(record.category, new ArrayList<Record>());
                     }
                     categoryToRecords.get(record.category).add(record);
                 }
             }
+            // log.info(categoryToRecords.toString());
             resp.getWriter().println(render(categoryToRecords, weekInMillis));
         } else {
             resp.getWriter().println(render(records, category, weekInMillis));
@@ -141,12 +160,17 @@ public class NoteExportServlet extends HttpServlet {
             renderTitle(builder, index);
             renderSpan(builder, "讲座题目", r.title, true);
             renderSpan(builder, "主讲人", r.speaker, false);
-            renderSpan(builder, "时间", r.date, false);
+            renderSpan(builder, "时间", hackDate(r.date), false);
             renderSpan(builder, "地点", r.room, false);
             renderSpan(builder, "备注", r.remark, false);
             renderEmptyLine(builder);
             index += 1;
         }
+    }
+
+    // hack: not recommended
+    private String hackDate(String date) {
+        return date.replace("pm", "PM").replace("am", "AM").replace("0PM", "0 PM").replace("0AM", "0 AM");
     }
 
     private void renderTitle(StringBuilder builder, int index) {
