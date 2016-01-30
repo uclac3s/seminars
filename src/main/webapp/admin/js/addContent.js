@@ -179,6 +179,14 @@ function checkFields() {
 	};
 }
 
+$(function() {
+	$("#loading").dialog({
+    	hide: 'slide',
+		show: 'slide',
+		autoOpen: false
+	});
+});
+
 function Submit(isDelete) {
 	var seminar = checkFields();
 	if ((seminar == undefined) || (seminar == null)) {
@@ -193,8 +201,17 @@ function Submit(isDelete) {
 		url: "/admin/notesync",
 		data: {"insert": seminar_dat, "delete": isDelete},
 		dataType: "json",
+		beforeSend: function(){
+			$("#loading").dialog('open').html("<p>Please Wait...</p>");
+        },
 		success: function (result) {
-			alert(result["result"]);
+			$('#loading').html("<p>" + result["result"] + "</p><p>(Click X to close.)</p>");
 		}
   });
+
+  	// after clicking submit, fields other than category and date will be erased
+	document.getElementById("title").value = '';
+	document.getElementById("speaker").value = '';
+	document.getElementById("room").value = '';
+	document.getElementById("remark").value = '';
 }

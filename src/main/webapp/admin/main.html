@@ -10,6 +10,9 @@
 	<link rel="stylesheet" href="css/normalize.min.css">
 	<link rel="stylesheet" href="css/main.css">
 	<link rel="stylesheet" href="css/bootstrap.css">
+	<link rel="stylesheet" href="css/jquery-ui.css">
+	<script src="js/vendor/jquery-1.11.1.min.js"></script>
+	<script src="js/vendor/jquery-ui.min.js"></script>
 	<script src="js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
 	<script src="js/addContent.js"></script>
 	<style type="text/css">
@@ -24,6 +27,11 @@
 </head>
 
 <body onLoad="add_header(); add_footer();">
+
+<div id="loading" title="Status"> 
+    <p>Please wait ...</p>
+</div>
+
 <style type="text/css">
 	#Video1
 	{
@@ -115,13 +123,13 @@
 				<div class = "page-header">
 					<h1><strong>格式要求</strong></h1>
 				</div>
-				<p>1. 我们使用seminar title作为unique ID, submit title名相同的seminar会报错，必须用delete删除原来的记录。</p>
+				<p>1. 我们使用seminar title作为unique ID, submit title名相同的seminar会报错，必须先用delete删除原来的记录。</p>
 				<p>2. 除Remark外，其他输入框不能为空。</p>
 				<p>3. 输入的值最大长度为1000字节。</p>
 				<p>4. seminar 时间必按照统一的格式（英文逗号隔开）： DayOfWeek, Month Day, Year, Time。<p>
 				<p>Time Format Example 1: Monday, November 02, 2015, 4:00PM - 5:30PM. </p>
 				<p>Time Format Example 2 (End time unknown): Tuesday, November 03, 2015, 4:00PM - . </p>
-				<!--p>5. 成功提交后，除category之外的其他部分会自动清空。 </p-->
+				<p>5. 成功提交后，除category和date之外的其他部分会自动清空，确保不重复提交。 </p>
 			</div>
 
 			<div class="col-md-11 col-sm-11">
@@ -143,7 +151,6 @@
 	</div> <!-- #main -->
 </div> <!-- #main-container -->
 
-<script>window.jQuery || document.write('<script src="js/vendor/jquery-1.11.1.min.js"><\/script>')</script>
 <script src="js/plugins.js"></script>
 </body>
 
