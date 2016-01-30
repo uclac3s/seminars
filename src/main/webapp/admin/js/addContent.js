@@ -205,7 +205,10 @@ function Submit(isDelete) {
 			$("#loading").dialog('open').html("<p>Please Wait...</p>");
         },
 		success: function (result) {
-			$('#loading').html("<p>" + result["result"] + "</p><p>(Click X to close.)</p>");
+			$('#loading').html("<p>" + result["result"] + "</p>");
+			setTimeout(function() {
+                $("#loading").dialog('close');
+            }, 2000);
 		}
   });
 
