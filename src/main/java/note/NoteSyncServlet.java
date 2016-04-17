@@ -29,6 +29,7 @@ public class NoteSyncServlet extends HttpServlet {
                 .load()
                 .type(Record.class) //
                 .filter("title", r.title)
+                .filter("currentWeek", r.currentWeek)
                 .list();
 
         if (existed.size() > 0) {
